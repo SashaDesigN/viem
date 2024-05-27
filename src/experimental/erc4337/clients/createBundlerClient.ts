@@ -14,6 +14,7 @@ import type { Chain } from '../../../types/chain.js'
 import type { RpcSchema } from '../../../types/eip1193.js'
 import type { Prettify } from '../../../types/utils.js'
 import type { BundlerRpcSchema } from '../types/eip1193.js'
+import { type BundlerActions, bundlerActions } from './decorators/bundler.js'
 
 export type BundlerClientConfig<
   transport extends Transport = Transport,
@@ -48,8 +49,8 @@ export type BundlerClient<
     account,
     rpcSchema extends RpcSchema
       ? [...BundlerRpcSchema, ...rpcSchema]
-      : BundlerRpcSchema
-    // WalletActions<chain, account>
+      : BundlerRpcSchema,
+    BundlerActions
   >
 >
 
@@ -99,5 +100,5 @@ export function createBundlerClient(
     transport,
     type: 'bundlerClient',
   })
-  return client
+  return client.extend(bundlerActions())
 }
