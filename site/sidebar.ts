@@ -1056,6 +1056,10 @@ export const sidebar = {
                 text: 'getChainId',
                 link: '/experimental/erc4337/getChainId',
               },
+              {
+                text: 'getSupportedEntryPoints',
+                link: '/experimental/erc4337/getSupportedEntryPoints',
+              },
             ],
           },
         ],

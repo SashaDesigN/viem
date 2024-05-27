@@ -53,7 +53,7 @@ type DefineAltoReturnType<chain extends Chain> = {
           ? ParseAccount<(typeof accounts)[0]['address']>
           : undefined,
     undefined
-  >
+  > & { type: 'bundlerClient' }
   rpcUrl: {
     http: string
   }
@@ -82,7 +82,7 @@ function defineAlto<const chain extends Chain>({
     chain,
     pollingInterval: 100,
     transport(args) {
-      return http(rpcUrl)(args)
+      return http(`http://localhost:${port}`)(args)
     },
   } as const satisfies ClientConfig
 

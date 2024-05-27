@@ -100,7 +100,7 @@ export type BundlerRpcSchema = [
    */
   {
     Method: 'eth_supportedEntryPoints'
-    Parameters: []
+    Parameters?: undefined
     ReturnType: readonly Address[]
   },
 ]

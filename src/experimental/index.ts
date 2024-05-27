@@ -1,5 +1,10 @@
 // biome-ignore lint/performance/noBarrelFile: entrypoint module
 export {
+  type GetSupportedEntryPointsErrorType,
+  type GetSupportedEntryPointsReturnType,
+  getSupportedEntryPoints,
+} from './erc4337/actions/getSupportedEntryPoints.js'
+export {
   type BundlerClient,
   type BundlerClientConfig,
   type CreateBundlerClientErrorType,

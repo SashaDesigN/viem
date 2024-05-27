@@ -2,6 +2,7 @@ import type { Address } from 'abitype'
 import type { Log } from '../../../types/log.js'
 import type { Hash, Hex } from '../../../types/misc.js'
 import type { TransactionReceipt } from '../../../types/transaction.js'
+import type { PartialBy } from '../../../types/utils.js'
 
 /** @link https://eips.ethereum.org/EIPS/eip-4337#-eth_estimateuseroperationgas */
 export type EstimateUserOperationGasReturnType<uint256 = bigint> = {
@@ -79,6 +80,12 @@ export type UserOperation<uint256 = bigint> = {
   /** The amount of gas to allocate for the verification step. */
   verificationGasLimit: uint256
 }
+
+export type UserOperationRequest<uint256 = bigint> = PartialBy<
+  UserOperation<uint256>,
+  // We are able to calculate these via `prepareUserOperationRequest`.
+  keyof EstimateUserOperationGasReturnType | 'nonce' | 'sender' | 'signature'
+>
 
 /** @link https://eips.ethereum.org/EIPS/eip-4337#-eth_getuseroperationreceipt */
 export type UserOperationReceipt<
