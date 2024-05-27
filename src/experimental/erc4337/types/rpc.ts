@@ -4,6 +4,7 @@ import type {
   GetUserOperationByHashReturnType,
   UserOperation,
   UserOperationReceipt,
+  UserOperationRequest,
 } from './userOperation.js'
 
 export type RpcEstimateUserOperationGasReturnType =
@@ -12,3 +13,4 @@ export type RpcGetUserOperationByHashReturnType =
   GetUserOperationByHashReturnType<Hex>
 export type RpcUserOperation = UserOperation<Hex>
 export type RpcUserOperationReceipt = UserOperationReceipt<Hex, Hex>
+export type RpcUserOperationRequest = UserOperationRequest<Hex>
