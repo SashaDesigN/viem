@@ -1,3 +1,4 @@
+import { altoMainnet } from './src/alto.js'
 import {
   anvilMainnet,
   anvilOptimism,
@@ -36,11 +37,15 @@ export default async function () {
   // TODO(fault-proofs): remove when fault proofs deployed to mainnet.
   const shutdownOptimismSepolia = await anvilOptimismSepolia.start()
 
+  const shutdownAltoMainnet = await altoMainnet.start()
+
   return () => {
     shutdownMainnet()
     shutdownOptimism()
     shutdownZkSync()
     shutdownSepolia()
     shutdownOptimismSepolia()
+
+    shutdownAltoMainnet()
   }
 }
