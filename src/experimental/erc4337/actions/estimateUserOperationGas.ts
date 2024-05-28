@@ -9,34 +9,49 @@ import type {
   GetChainParameter,
 } from '../../../types/chain.js'
 import type { Hex } from '../../../types/misc.js'
+import type { UnionPartialBy } from '../../../types/utils.js'
 import { parseAccount } from '../../../utils/accounts.js'
 import { getChainContractAddress } from '../../../utils/chain/getChainContractAddress.js'
 import type { BundlerClient } from '../clients/createBundlerClient.js'
 import { formatUserOperationRequest } from '../formatters/userOperation.js'
 import type { UserOperationRequest } from '../types/userOperation.js'
-import type { ERC4337Version, GetVersionParameter } from '../types/version.js'
+import type {
+  DeriveVersion,
+  ERC4337Version,
+  GetVersionParameter,
+} from '../types/version.js'
 
-export type SendUserOperationParameters<
+export type EstimateUserOperationGasParameters<
   chain extends Chain | undefined = Chain | undefined,
   account extends Account | undefined = Account | undefined,
-  version extends ERC4337Version | undefined = ERC4337Version | undefined,
+  erc4337Version extends ERC4337Version | undefined =
+    | ERC4337Version
+    | undefined,
   chainOverride extends Chain | undefined = Chain | undefined,
-  versionOverride extends ERC4337Version | undefined =
+  erc4337VersionOverride extends ERC4337Version | undefined =
     | ERC4337Version
     | undefined,
   _derivedChain extends Chain | undefined = DeriveChain<chain, chainOverride>,
-> = UserOperationRequest<'0.7.0'> &
+  _derivedVersion extends ERC4337Version = DeriveVersion<
+    erc4337Version,
+    erc4337VersionOverride
+  >,
+> = UnionPartialBy<
+  UserOperationRequest<_derivedVersion>,
+  // @ts-expect-error
+  'maxFeePerGas' | 'maxPriorityFeePerGas'
+> &
   GetAccountParameter<account> &
   GetChainParameter<chain, chainOverride> &
-  GetVersionParameter<version, versionOverride> & {
+  GetVersionParameter<erc4337Version, erc4337VersionOverride> & {
     entryPointAddress?: Address
   }
 
-export type SendUserOperationReturnType = Hex
+export type EstimateUserOperationGasReturnType = Hex
 
-export type SendUserOperationErrorType = ErrorType
+export type EstimateUserOperationGasErrorType = ErrorType
 
-export async function sendUserOperation<
+export async function estimateUserOperationGas<
   chain extends Chain | undefined,
   account extends Account | undefined,
   erc4337Version extends ERC4337Version | undefined,
@@ -44,7 +59,7 @@ export async function sendUserOperation<
   erc4337VersionOverride extends ERC4337Version | undefined = undefined,
 >(
   client: BundlerClient<Transport, chain, account, erc4337Version>,
-  parameters: SendUserOperationParameters<
+  parameters: EstimateUserOperationGasParameters<
     chain,
     account,
     erc4337Version,
@@ -62,7 +77,7 @@ export async function sendUserOperation<
     factoryData,
     maxFeePerGas,
     maxPriorityFeePerGas,
-    nonce,
+    nonce = 0n,
     paymaster,
     paymasterData,
     paymasterPostOpGasLimit,
@@ -71,7 +86,7 @@ export async function sendUserOperation<
     sender,
     signature,
     verificationGasLimit,
-  } = parameters
+  } = parameters as unknown as EstimateUserOperationGasParameters
 
   if (!account_ && !sender)
     throw new AccountNotFoundError({
@@ -113,11 +128,11 @@ export async function sendUserOperation<
 
   try {
     return await client.request({
-      method: 'eth_sendUserOperation',
+      method: 'eth_estimateUserOperationGas',
       params: [rpcParameters, entryPointAddress],
     })
   } catch (error) {
-    // biome-ignore lint/complexity/noUselessCatch: TODO – `getUserOperationError`
+    // biome-ignore lint/complexity/noUselessCatch: TODO – `getEstimateUserOperationGasError`
     throw error
   }
 }

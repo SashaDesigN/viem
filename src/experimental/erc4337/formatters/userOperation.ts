@@ -11,14 +11,22 @@ export function formatUserOperationRequest(
 ) {
   const rpcRequest = {} as RpcUserOperation
 
+  if (typeof request.callData !== 'undefined')
+    rpcRequest.callData = request.callData
   if (typeof request.callGasLimit !== 'undefined')
     rpcRequest.callGasLimit = numberToHex(request.callGasLimit)
+  if (typeof request.factory !== 'undefined')
+    rpcRequest.factory = request.factory
+  if (typeof request.factoryData !== 'undefined')
+    rpcRequest.factoryData = request.factoryData
   if (typeof request.maxFeePerGas !== 'undefined')
     rpcRequest.maxFeePerGas = numberToHex(request.maxFeePerGas)
   if (typeof request.maxPriorityFeePerGas !== 'undefined')
     rpcRequest.maxPriorityFeePerGas = numberToHex(request.maxPriorityFeePerGas)
   if (typeof request.nonce !== 'undefined')
     rpcRequest.nonce = numberToHex(request.nonce)
+  if (typeof request.paymaster !== 'undefined')
+    rpcRequest.paymaster = request.paymaster
   if (typeof request.paymasterPostOpGasLimit !== 'undefined')
     rpcRequest.paymasterPostOpGasLimit = numberToHex(
       request.paymasterPostOpGasLimit,
@@ -29,6 +37,9 @@ export function formatUserOperationRequest(
     )
   if (typeof request.preVerificationGas !== 'undefined')
     rpcRequest.preVerificationGas = numberToHex(request.preVerificationGas)
+  if (typeof request.sender !== 'undefined') rpcRequest.sender = request.sender
+  if (typeof request.signature !== 'undefined')
+    rpcRequest.signature = request.signature
   if (typeof request.verificationGasLimit !== 'undefined')
     rpcRequest.verificationGasLimit = numberToHex(request.verificationGasLimit)
 

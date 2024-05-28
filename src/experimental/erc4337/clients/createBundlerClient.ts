@@ -14,6 +14,7 @@ import type { Chain } from '../../../types/chain.js'
 import type { RpcSchema } from '../../../types/eip1193.js'
 import type { Prettify } from '../../../types/utils.js'
 import type { BundlerRpcSchema } from '../types/eip1193.js'
+import type { ERC4337Version } from '../types/version.js'
 import { type BundlerActions, bundlerActions } from './decorators/bundler.js'
 
 export type BundlerClientConfig<
@@ -22,6 +23,9 @@ export type BundlerClientConfig<
   accountOrAddress extends Account | Address | undefined =
     | Account
     | Address
+    | undefined,
+  erc4337Version extends ERC4337Version | undefined =
+    | ERC4337Version
     | undefined,
   rpcSchema extends RpcSchema | undefined = undefined,
 > = Prettify<
@@ -34,13 +38,16 @@ export type BundlerClientConfig<
     | 'pollingInterval'
     | 'rpcSchema'
     | 'transport'
-  >
+  > & {
+    erc4337Version?: erc4337Version
+  }
 >
 
 export type BundlerClient<
   transport extends Transport = Transport,
   chain extends Chain | undefined = Chain | undefined,
   account extends Account | undefined = Account | undefined,
+  erc4337Version extends ERC4337Version | undefined = undefined,
   rpcSchema extends RpcSchema | undefined = undefined,
 > = Prettify<
   Client<
@@ -50,7 +57,7 @@ export type BundlerClient<
     rpcSchema extends RpcSchema
       ? [...BundlerRpcSchema, ...rpcSchema]
       : BundlerRpcSchema,
-    BundlerActions
+    BundlerActions & { erc4337Version: erc4337Version }
   >
 >
 
@@ -79,20 +86,33 @@ export function createBundlerClient<
   transport extends Transport,
   chain extends Chain | undefined = undefined,
   accountOrAddress extends Account | Address | undefined = undefined,
+  erc4337Version extends ERC4337Version | undefined = undefined,
   rpcSchema extends RpcSchema | undefined = undefined,
 >(
   parameters: BundlerClientConfig<
     transport,
     chain,
     accountOrAddress,
+    erc4337Version,
     rpcSchema
   >,
-): BundlerClient<transport, chain, ParseAccount<accountOrAddress>, rpcSchema>
+): BundlerClient<
+  transport,
+  chain,
+  ParseAccount<accountOrAddress>,
+  erc4337Version,
+  rpcSchema
+>
 
 export function createBundlerClient(
   parameters: BundlerClientConfig,
 ): BundlerClient {
-  const { key = 'bundler', name = 'Bundler Client', transport } = parameters
+  const {
+    erc4337Version,
+    key = 'bundler',
+    name = 'Bundler Client',
+    transport,
+  } = parameters
   const client = createClient({
     ...parameters,
     key,
@@ -100,5 +120,7 @@ export function createBundlerClient(
     transport,
     type: 'bundlerClient',
   })
-  return client.extend(bundlerActions())
+  return client
+    .extend(bundlerActions())
+    .extend(() => ({ erc4337Version })) as BundlerClient
 }

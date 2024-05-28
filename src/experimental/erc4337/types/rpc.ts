@@ -6,11 +6,24 @@ import type {
   UserOperationReceipt,
   UserOperationRequest,
 } from './userOperation.js'
+import type { ERC4337Version } from './version.js'
 
-export type RpcEstimateUserOperationGasReturnType =
-  EstimateUserOperationGasReturnType<Hex>
-export type RpcGetUserOperationByHashReturnType =
-  GetUserOperationByHashReturnType<Hex>
-export type RpcUserOperation = UserOperation<Hex>
-export type RpcUserOperationReceipt = UserOperationReceipt<Hex, Hex>
-export type RpcUserOperationRequest = UserOperationRequest<Hex>
+export type RpcEstimateUserOperationGasReturnType<
+  erc4337Version extends ERC4337Version = ERC4337Version,
+> = EstimateUserOperationGasReturnType<erc4337Version, Hex>
+
+export type RpcGetUserOperationByHashReturnType<
+  erc4337Version extends ERC4337Version = ERC4337Version,
+> = GetUserOperationByHashReturnType<erc4337Version, Hex>
+
+export type RpcUserOperation<
+  erc4337Version extends ERC4337Version = ERC4337Version,
+> = UserOperation<erc4337Version, Hex>
+
+export type RpcUserOperationReceipt<
+  erc4337Version extends ERC4337Version = ERC4337Version,
+> = UserOperationReceipt<erc4337Version, Hex, Hex>
+
+export type RpcUserOperationRequest<
+  erc4337Version extends ERC4337Version = ERC4337Version,
+> = UserOperationRequest<erc4337Version, Hex>
